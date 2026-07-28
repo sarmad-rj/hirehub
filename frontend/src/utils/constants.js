@@ -35,3 +35,18 @@ export const INITIAL_SIGNUP_FORM = {
   role: ROLES.SEEKER,
 };
 
+export const APPLICATION_STATUS = {
+  APPLIED: "applied",
+  REVIEWED: "reviewed",
+  INTERVIEW: "interview",
+  OFFER: "offer",
+  REJECTED: "rejected",
+};
+
+export const INITIAL_JOB_FORM = {
+  title: "",
+  description: "",
+  location: "",
+  salary_range: "",
+  employment_type: "Full-time",
+};

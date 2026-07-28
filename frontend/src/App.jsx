@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import JobListings from "./pages/JobListings";
 import JobDetail from "./pages/JobDetail";
+import EmployerDashboard from "./pages/EmployerDashboard";
 import SeekerDashboard from "./pages/SeekerDashboard";
 import NotFound from "./pages/NotFound";
 import { ROLES, ROUTES } from "./utils/constants";
@@ -29,6 +30,15 @@ const App = () => {
               <Route path={ROUTES.SIGNUP} element={<Signup />} />
               <Route path={ROUTES.JOBS} element={<JobListings />} />
               <Route path={ROUTES.JOB_DETAILS} element={<JobDetail />} />
+
+              <Route
+                path={ROUTES.EMPLOYER_DASHBOARD}
+                element={
+                  <ProtectedRoute requiredRole={ROLES.EMPLOYER}>
+                    <EmployerDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path={ROUTES.SEEKER_DASHBOARD}
