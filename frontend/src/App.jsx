@@ -3,12 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./auth/AuthContext";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import JobListings from "./pages/JobListings";
 import JobDetail from "./pages/JobDetail";
+import SeekerDashboard from "./pages/SeekerDashboard";
 import NotFound from "./pages/NotFound";
-import { ROUTES } from "./utils/constants";
+import { ROLES, ROUTES } from "./utils/constants";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,16 @@ const App = () => {
               <Route path={ROUTES.SIGNUP} element={<Signup />} />
               <Route path={ROUTES.JOBS} element={<JobListings />} />
               <Route path={ROUTES.JOB_DETAILS} element={<JobDetail />} />
+
+              <Route
+                path={ROUTES.SEEKER_DASHBOARD}
+                element={
+                  <ProtectedRoute requiredRole={ROLES.SEEKER}>
+                    <SeekerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
             </Route>
           </Routes>
