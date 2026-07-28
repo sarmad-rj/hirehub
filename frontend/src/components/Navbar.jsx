@@ -33,14 +33,25 @@ const Navbar = () => {
           </Link>
           {user ? (
             <>
-              {user.role === ROLES.EMPLOYER ? (
+              {user.role === ROLES.EMPLOYER && (
                 <Link
                   to={ROUTES.EMPLOYER_DASHBOARD}
                   className="text-slate-600 hover:text-emerald-700 font-medium transition"
                 >
                   Employer Dashboard
                 </Link>
-              ) : (
+              )}
+
+              {user.role === ROLES.ADMIN && (
+                <Link
+                  to={ROUTES.ADMIN_DASHBOARD}
+                  className="text-slate-600 hover:text-emerald-700 font-medium transition"
+                >
+                  Admin Dashboard
+                </Link>
+              )}
+
+              {user.role === ROLES.SEEKER && (
                 <Link
                   to={ROUTES.SEEKER_DASHBOARD}
                   className="text-slate-600 hover:text-emerald-700 font-medium transition"
@@ -48,6 +59,7 @@ const Navbar = () => {
                   My Applications
                 </Link>
               )}
+
               <span className="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full uppercase tracking-wider font-semibold border border-emerald-200">
                 {user.role}
               </span>

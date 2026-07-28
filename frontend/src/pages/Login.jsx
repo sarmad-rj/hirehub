@@ -39,6 +39,8 @@ const Login = () => {
 
       if (userRole === ROLES.EMPLOYER) {
         navigate(ROUTES.EMPLOYER_DASHBOARD);
+      } else if (userRole === ROLES.ADMIN) {
+        navigate(ROUTES.ADMIN_DASHBOARD);
       } else {
         navigate(ROUTES.JOBS);
       }

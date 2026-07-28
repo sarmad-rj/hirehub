@@ -17,9 +17,8 @@ export const ROUTES = {
   JOBS: "/jobs",
   JOB_DETAILS: "/jobs/:jobId",
   EMPLOYER_DASHBOARD: "/employer/dashboard",
-  CREATE_JOB: "/employer/create-job",
-  EMPLOYER_APPLICANTS: "/employer/dashboard/listings/:listingId/applicants",
   SEEKER_DASHBOARD: "/seeker/dashboard",
+  ADMIN_DASHBOARD: "/admin/dashboard",
   NOT_FOUND: "*",
 };
 

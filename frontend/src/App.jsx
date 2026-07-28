@@ -10,6 +10,7 @@ import JobListings from "./pages/JobListings";
 import JobDetail from "./pages/JobDetail";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import SeekerDashboard from "./pages/SeekerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import { ROLES, ROUTES } from "./utils/constants";
 
@@ -45,6 +46,15 @@ const App = () => {
                 element={
                   <ProtectedRoute requiredRole={ROLES.SEEKER}>
                     <SeekerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path={ROUTES.ADMIN_DASHBOARD}
+                element={
+                  <ProtectedRoute requiredRole={ROLES.ADMIN}>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 }
               />
