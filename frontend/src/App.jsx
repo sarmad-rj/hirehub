@@ -6,6 +6,7 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import JobListings from "./pages/JobListings";
+import JobDetail from "./pages/JobDetail";
 import NotFound from "./pages/NotFound";
 import { ROUTES } from "./utils/constants";
 
@@ -25,6 +26,7 @@ const App = () => {
               <Route path={ROUTES.LOGIN} element={<Login />} />
               <Route path={ROUTES.SIGNUP} element={<Signup />} />
               <Route path={ROUTES.JOBS} element={<JobListings />} />
+              <Route path={ROUTES.JOB_DETAILS} element={<JobDetail />} />
               <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
             </Route>
           </Routes>
