@@ -2,16 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..models import User, Company
+from ..models import User, Company, UserRole
 from ..schemas import UserCreate, UserResponse, Token
-from ..auth import hash_password, verify_password, create_access_token
+from ..services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def signup(user_data: UserCreate, db: Session = Depends(get_db)):
-
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(
@@ -19,7 +18,7 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered",
         )
 
-    hashed_pwd = hash_password(user_data.password)
+    hashed_pwd = AuthService.hash_password(user_data.password)
     new_user = User(
         email=user_data.email,
         hashed_password=hashed_pwd,
@@ -29,8 +28,8 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    if new_user.role == "employer":
-        company_name = new_user.email.split("@")[0].capitalize() + " Company"
+    if new_user.role == UserRole.EMPLOYER:
+        company_name = f"{new_user.email.split('@')[0].capitalize()} Company"
         new_company = Company(name=company_name, employer_id=new_user.id)
         db.add(new_company)
         db.commit()
@@ -41,13 +40,15 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == form_data.username).first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not AuthService.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
         )
 
-    access_token = create_access_token(data={"sub": user.email, "role": user.role.value})
+    access_token = AuthService.create_access_token(
+        data={"sub": user.email, "role": user.role.value}
+    )
     return {
         "access_token": access_token,
         "token_type": "bearer",
