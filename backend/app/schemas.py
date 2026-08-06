@@ -87,3 +87,8 @@ class ApplicationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class GoogleLoginRequest(BaseModel):
+    id_token: str
+    role: Optional[UserRole] = UserRole.SEEKER
+    

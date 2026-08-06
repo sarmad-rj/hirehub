@@ -29,3 +29,27 @@ class AuthService:
             return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         except JWTError:
             return None
+        
+    @staticmethod
+    def authenticate_google_user(db: Session, google_data: dict, role: Optional[UserRole] = None) -> User:
+        """Retrieves an existing Google user or creates a new user and company profile."""
+        email = google_data.get("email")
+        user = db.query(User).filter(User.email == email).first()
+
+        if not user:
+            user = User(
+                email=email,
+                hashed_password=AuthService.hash_password("GOOGLE_SSO_USER"),
+                role=role or UserRole.SEEKER,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+
+            if user.role == UserRole.EMPLOYER:
+                company_name = f"{user.email.split('@')[0].capitalize()} Company"
+                new_company = Company(name=company_name, employer_id=user.id)
+                db.add(new_company)
+                db.commit()
+
+        return user        
