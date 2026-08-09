@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { loginApi } from "../services/authService";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 import {
   ROLES,
   ROUTES,
@@ -14,6 +16,21 @@ const Login = () => {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const handleAuthSuccess = (accessToken, userRole, email) => {
+    login(accessToken, userRole, email);
+
+    if (userRole === ROLES.EMPLOYER) {
+      navigate(ROUTES.EMPLOYER_DASHBOARD);
+    } else if (userRole === ROLES.ADMIN) {
+      navigate(ROUTES.ADMIN_DASHBOARD);
+    } else {
+      navigate(ROUTES.JOBS);
+    }
+  };
+
+  const { handleGoogleSuccess, handleGoogleError, googleError } =
+    useGoogleAuth(handleAuthSuccess);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,19 +52,13 @@ const Login = () => {
         return;
       }
 
-      login(data.access_token, userRole, formData.email);
-
-      if (userRole === ROLES.EMPLOYER) {
-        navigate(ROUTES.EMPLOYER_DASHBOARD);
-      } else if (userRole === ROLES.ADMIN) {
-        navigate(ROUTES.ADMIN_DASHBOARD);
-      } else {
-        navigate(ROUTES.JOBS);
-      }
+      handleAuthSuccess(data.access_token, userRole, formData.email);
     } catch (err) {
       setError(err.response?.data?.detail || "Invalid email or password");
     }
   };
+
+  const activeError = error || googleError;
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center py-6">
@@ -62,9 +73,9 @@ const Login = () => {
           Sign in to access your HireHub portal
         </p>
 
-        {error && (
+        {activeError && (
           <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-100">
-            {error}
+            {activeError}
           </div>
         )}
 
@@ -120,6 +131,13 @@ const Login = () => {
         >
           Sign In
         </button>
+
+        <GoogleAuthButton
+          onSuccess={(res) =>
+            handleGoogleSuccess(res, formData.role.toLowerCase())
+          }
+          onError={handleGoogleError}
+        />
 
         <p className="mt-5 text-center text-sm text-slate-600">
           Don't have an account?{" "}

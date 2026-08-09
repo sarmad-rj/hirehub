@@ -14,3 +14,11 @@ export const signupApi = async (userPayload) => {
   const response = await API.post("/auth/signup", userPayload);
   return response.data;
 };
+
+export const googleLoginApi = async (idToken, role = "seeker") => {
+  const response = await API.post("/auth/google", {
+    id_token: idToken,
+    role: role,
+  });
+  return response.data;
+};

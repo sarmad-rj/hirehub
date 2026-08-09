@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { signupApi, loginApi } from "../services/authService";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 import {
   ROLES,
   ROUTES,
@@ -15,6 +17,19 @@ const Signup = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const handleAuthSuccess = (accessToken, userRole, email) => {
+    login(accessToken, userRole, email);
+
+    if (userRole === ROLES.EMPLOYER) {
+      navigate(ROUTES.EMPLOYER_DASHBOARD);
+    } else {
+      navigate(ROUTES.JOBS);
+    }
+  };
+
+  const { handleGoogleSuccess, handleGoogleError, googleError } =
+    useGoogleAuth(handleAuthSuccess);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -27,18 +42,17 @@ const Signup = () => {
     try {
       await signupApi(formData);
       const loginData = await loginApi(formData.email, formData.password);
-
-      login(loginData.access_token, loginData.role, formData.email);
-
-      if (formData.role === ROLES.EMPLOYER) {
-        navigate(ROUTES.EMPLOYER_DASHBOARD);
-      } else {
-        navigate(ROUTES.JOBS);
-      }
+      handleAuthSuccess(
+        loginData.access_token,
+        loginData.role.toLowerCase(),
+        formData.email,
+      );
     } catch (err) {
       setError(err.response?.data?.detail || "Failed to create account");
     }
   };
+
+  const activeError = error || googleError;
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center py-6">
@@ -53,9 +67,9 @@ const Signup = () => {
           Get started as a Seeker or Employer
         </p>
 
-        {error && (
+        {activeError && (
           <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-100">
-            {error}
+            {activeError}
           </div>
         )}
 
@@ -111,6 +125,13 @@ const Signup = () => {
         >
           Register Account
         </button>
+
+        <GoogleAuthButton
+          onSuccess={(res) =>
+            handleGoogleSuccess(res, formData.role.toLowerCase())
+          }
+          onError={handleGoogleError}
+        />
 
         <p className="mt-5 text-center text-sm text-slate-600">
           Already have an account?{" "}
