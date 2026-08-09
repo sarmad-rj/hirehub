@@ -49,3 +49,10 @@ export const INITIAL_JOB_FORM = {
   salary_range: "",
   employment_type: "Full-time",
 };
+
+export const getDashboardRouteByRole = (role) => {
+  if (role === ROLES.EMPLOYER) return ROUTES.EMPLOYER_DASHBOARD;
+  if (role === ROLES.ADMIN) return ROUTES.ADMIN_DASHBOARD;
+  return ROUTES.JOBS;
+};
+

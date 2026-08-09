@@ -5,10 +5,10 @@ import { loginApi, signupApi } from "../services/authService";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import GoogleAuthButton from "./GoogleAuthButton";
 import {
-  ROLES,
   ROUTES,
   ROLE_LABELS,
   INITIAL_LOGIN_FORM,
+  getDashboardRouteByRole,
 } from "../utils/constants";
 
 const AuthForm = ({ mode = "login" }) => {
@@ -20,14 +20,7 @@ const AuthForm = ({ mode = "login" }) => {
 
   const handleAuthSuccess = (accessToken, userRole, email) => {
     login(accessToken, userRole, email);
-
-    if (userRole === ROLES.EMPLOYER) {
-      navigate(ROUTES.EMPLOYER_DASHBOARD);
-    } else if (userRole === ROLES.ADMIN) {
-      navigate(ROUTES.ADMIN_DASHBOARD);
-    } else {
-      navigate(ROUTES.JOBS);
-    }
+    navigate(getDashboardRouteByRole(userRole));
   };
 
   const { handleGoogleSuccess, handleGoogleError, googleError } =
